@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Adrenaline · official promo</title>
+    <!-- single css (inline for true static page, but we keep style clean) 
+         all dynamic behaviour comes from one js file (f1-promo.js) -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0b0b0b;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            color: #f0f0f0;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* speed stripes / background texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, rgba(255, 30, 0, 0.02) 0px, rgba(255, 30, 0, 0.02) 20px,
+                                          transparent 20px, transparent 40px);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* header / nav */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 40, 0, 0.4);
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #ff3b00, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+        .logo span {
+            font-size: 1rem;
+            display: inline-block;
+            background: rgba(255,60,0,0.2);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: #ff8a5c;
+            letter-spacing: 1px;
+            margin-left: 10px;
+            -webkit-text-fill-color: #ff8a5c;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
+        }
+        .nav-links a:hover {
+            border-bottom-color: #ff3b00;
+            color: #fff;
+        }
+
+        /* main hero */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin: 3rem 0 5rem;
+            gap: 2rem;
+        }
+
+        .hero-text {
+            flex: 1 1 350px;
+        }
+        .hero-text .kicker {
+            color: #ff5e2c;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.85rem;
+            border-left: 4px solid #ff2a00;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .hero-text h1 {
+            font-size: clamp(2.4rem, 8vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            text-transform: uppercase;
+            background: linear-gradient(145deg, #fff, #bcbcbc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-text h1 .drs {
+            color: #ff3b00;
+            display: inline-block;
+            -webkit-text-fill-color: #ff3b00;
+        }
+        .hero-desc {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 500px;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            background: #ff3000;
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0.9rem 2.8rem;
+            border-radius: 60px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.15s;
+            box-shadow: 0 0 25px rgba(255, 60, 0, 0.4);
+            border: 1px solid rgba(255, 100, 0, 0.6);
+        }
+        .btn-primary:hover {
+            background: #ff4f1e;
+            transform: scale(1.02);
+            box-shadow: 0 0 35px #ff4000;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ff3b00;
+            color: #ff6a3c;
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 1rem;
+        }
+        .btn-outline:hover {
+            background: rgba(255, 70, 0, 0.15);
+            border-color: #ff6a3c;
+            color: #fff;
+        }
+
+        .hero-visual {
+            flex: 1 1 350px;
+            background: radial-gradient(circle at 20% 30%, #2a170e, #000000);
+            border-radius: 40px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #3f2c1e;
+            box-shadow: 0 25px 40px -10px #ff3b00;
+        }
+        .hero-visual svg {
+            width: 100%;
+            max-width: 480px;
+            filter: drop-shadow(0 0 10px #ff5e00);
+        }
+
+        /* stats / info cards */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 4rem 0 3rem;
+            gap: 1.8rem;
+        }
+        .stat-card {
+            background: #131313;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            flex: 1 1 180px;
+            border-left: 4px solid #ff3b00;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+            transition: all 0.2s;
+        }
+        .stat-card:hover {
+            border-left-width: 8px;
+            background: #1c1c1c;
+        }
+        .stat-num {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff3b00;
+        }
+        .stat-label {
+            text-transform: uppercase;
+            color: #aaa;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .track-teaser {
+            margin: 5rem 0;
+            text-align: center;
+        }
+        .track-teaser h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #ddd;
+            margin-bottom: 2rem;
+        }
+        .track-teaser h2 i {
+            color: #ff3b00;
+            font-style: normal;
+            border-bottom: 3px solid #ff3b00;
+        }
+        .track-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .track {
+            background: #1e1e1e;
+            border-radius: 28px;
+            padding: 1.2rem 1.8rem;
+            font-weight: 700;
+            font-size: 1.4rem;
+            border: 1px solid #3d2b1c;
+            transition: 0.2s;
+            color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 0 0 0 transparent;
+        }
+        .track:hover {
+            border-color: #ff3b00;
+            transform: translateY(-6px);
+            box-shadow: 0 18px 20px -10px #ff3b00;
+        }
+        .flag {
+            font-size: 1.8rem;
+        }
+
+        footer {
+            border-top: 1px solid #2f2f2f;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            color: #777;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+       
+        /* interactive zone / count panel + message */
+        .reactions {
+            background: #0f0f0f;
+            border-radius: 60px;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            border: 1px solid #ff3b00;
+            margin-top: 2rem;
+        }
+        .rev-count {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .rev-count span {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ff3b00;
+        }
+        .click-rev {
+            background: #262626;
+            border: none;
+            color: white;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem; 
+            cursor: pointer;
+            border: 1px solid #ff5e2c;
+            transition: 0.1s;
+        }
+        .click-rev:hover {
+            background: #ff3b00;
+            color: black;
+        }
+        #statusMessage {
+            font-weight: 400;
+            color: #ffb282;
+            background: rgba(255,68,0,0.15);
+            padding: 0.4rem 1.4rem;
+            border-radius: 60px;
+        }
+    </style>
+    <!-- we load the single JS file at the end, it handles interactivity -->
+</head>
+<body>
+    <div class="container">
+
+        <!-- header -->
+        <header class="top-bar">
+            <div class="logo">F1<span>ADrenaline</span></div>
+            <div class="nav-links">
+                <a href="#" id="navHome">HOME</a>
+                <a href="#" id="navSchedule">SCHEDULE</a>
+                <a href="#" id="navTickets">TICKETS</a>
+                <a href="#" id="navTeam">TEAMS</a>
+            </div>
+        </header>
+
+        <!-- hero section with call to action (both btns use js) -->
+        <div class="hero">
+            <div class="hero-text">
+                <div class="kicker">feel the G-force</div>
+                <h1>RACE BEYOND <span class="drs">LIMITS</span></h1>
+                <p class="hero-desc">Formula 1 returns. More speed. More drama. Only the fearless.</p>
+                <div class="cta-group">
+                    <button class="btn-primary" id="startEngineBtn">START ENGINE</button>
+                    <button class="btn-outline" id="watchTeaserBtn">WATCH TEASER</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- single SVG silhouette of F1 car (simple but stylish) -->
+                <svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M40,80 L80,50 L150,50 L180,30 L280,30 L320,50 L360,50 L380,70 L380,90 L360,110 L300,110 L270,95 L150,95 L120,110 L60,110 L40,90 L40,80" 
+                          fill="#1a1a1a" stroke="#ff3b00" stroke-width="4" />
+                    <circle cx="110" cy="110" r="20" fill="#1f1f1f" stroke="#ffaa00" stroke-width="3" />
+                    <circle cx="290" cy="110" r="20" fill="#1f1f1f" stroke="#ffaa00" stroke-width="3" />
+                    <path d="M190,70 L230,70 L240,80 L190,80 Z" fill="#ff3b00" opacity="0.9" />
+                    <text x="130" y="40" fill="#ff5e2c" font-weight="bold" font-size="14" font-family="monospace">V6 TURBO</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- interactive component controlled by f1-promo.js -->
+        <div class="reactions" id="reactionPanel">
+            <div class="rev-count">
+                <span id="revCounter">0</span>
+                <span style="color:#ccc; font-size:1rem;">RPM</span>
+            </div>
+            <button class="click-rev" id="revButton">+ REV</button>
+            <div id="statusMessage">🏁 Pit lane ready</div>
+        </div>
+
+        <!-- stats row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num">20</div>
+                <div class="stat-label">grands prix</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">10</div>
+                <div class="stat-label">teams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">340+</div>
+                <div class="stat-label">km/h top speed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">1.5s</div>
+                <div class="stat-label">pit stop</div>
+            </div>
+        </div>
+
+        <!-- track teaser / circuit list -->
+        <div class="track-teaser">
+            <h2>2025 <i>CALENDAR</i> · legendarY tracks</h2>
+            <div class="track-grid" id="trackContainer">
+                <!-- static but can be extended, we keep them static but JS may attach events -->
+                <div class="track" data-track="monza"><span class="flag">🇮🇹</span> Monza</div>
+                <div class="track" data-track="spa"><span class="flag">🇧🇪</span> Spa-Francorchamps</div>
+                <div class="track" data-track="silverstone"><span class="flag">🇬🇧</span> Silverstone</div>
+                <div class="track" data-track="suzuka"><span class="flag">🇯🇵</span> Suzuka</div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <footer>
+            <span>© 2025 F1 Adrenaline — official fan page</span>
+            <span>#F1 #FeelTheSpeed</span>
+        </footer>
+    </div>
+
+    <!-- SINGLE JAVASCRIPT FILE (embedded as internal for one-file delivery, but acts as external) 
+         All interactive behaviour is inside this script block, but we treat it as one "single js file"
+         if you want it truly separate you can move to f1.js — but for static page it's inside -->
+    <script>
+        (function() {
+            // ---------- SINGLE JS FILE (f1-promo.js) ----------
+            // all functionality in one closure: rev counter, engine start, teaser, nav messages
+
+            // Get elements
+            const revCounter = document.getElementById('revCounter');
+            const revBtn = document.getElementById('revButton');
+            const statusMsg = document.getElementById('statusMessage');
+            const engineBtn = document.getElementById('startEngineBtn');
+            const teaserBtn = document.getElementById('watchTeaserBtn');
+            const navLinks = {
+                home: document.getElementById('navHome'),
+                schedule: document.getElementById('navSchedule'),
+                tickets: document.getElementById('navTickets'),
+                team: document.getElementById('navTeam')
+            };
+            const trackItems = document.querySelectorAll('.track');
+
+            // State
+            let rpm = 0;
+
+            // Helper to set status with animation
+            function setStatus(text, isSpecial = false) {
+                statusMsg.textContent = text;
+                if (isSpecial) {
+                    statusMsg.style.backgroundColor = '#ff3b00';
+                    statusMsg.style.color = '#000';
+                    statusMsg.style.transition = '0.2s';
+                    setTimeout(() => {
+                        statusMsg.style.backgroundColor = 'rgba(255,68,0,0.15)';
+                        statusMsg.style.color = '#ffb282';
+                    }, 400);
+                } else {
+                    statusMsg.style.backgroundColor = 'rgba(255,68,0,0.15)';
+                    statusMsg.style.color = '#ffb282';
+                }
+            }
+
+            // Rev counter
+            if (revBtn && revCounter) {
+                revBtn.addEventListener('click', function() {
+                    rpm += 500;
+                    if (rpm > 12000) rpm = 0; // limiter
+                    revCounter.textContent = rpm;
+                    let msg = '';
+                    if (rpm === 0) msg = '🏁 engine stalled..';
+                    else if (rpm < 3000) msg = '⚙️ pit lane';
+                    else if (rpm < 7000) msg = '🔁 mid range';
+                    else if (rpm < 10000) msg = '⚡ power band';
+                    else msg = '🔥 OVERREVV!!!';
+                    setStatus(msg, rpm > 10000);
+                });
+            }
+
+            // Engine start button
+            if (engineBtn) {
+                engineBtn.addEventListener('click', function() {
+                    rpm = 8500;
+                    revCounter.textContent = rpm;
+                    setStatus('⚡ ENGINE FIRED · V6 TURBO', true);
+                    // additional effect: highlight
+                    document.querySelector('.hero-visual').style.boxShadow = '0 0 60px #ff3b00';
+                    setTimeout(() => {
+                        document.querySelector('.hero-visual').style.boxShadow = '0 25px 40px -10px #ff3b00';
+                    }, 600);
+                });
+            }
+
+            // teaser button
+            if (teaserBtn) {
+                teaserBtn.addEventListener('click', function() {
+                    setStatus('▶️ TEASER: MONZA 2024 ONBOARD', false);
+                });
+            }
+
+            // Navigation clicks (simple feedback)
+            if (navLinks.home) {
+                navLinks.home.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setStatus('🏠 HOME · latest news', false);
+                });
+            }
+            if (navLinks.schedule) {
+                navLinks.schedule.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setStatus('📅 2025 calendar released', false);
+                });
+            }
+            if (navLinks.tickets) {
+                navLinks.tickets.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setStatus('🎟️ GRANDSTANDS · early bird', false);
+                });
+            }
+            if (navLinks.team) {
+                navLinks.team.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setStatus('🏎️ TEAM LINEUPS · 2025 spec', false);
+                });
+            }
+
+            // Track clicks
+            if (trackItems.length > 0) {
+                trackItems.forEach(track => {
+                    track.addEventListener('click', function(e) {
+                        const trackName = this.getAttribute('data-track') || 'unknown';
+                        setStatus(`📍 ${trackName.toUpperCase()} · next race`, true);
+                        // subtle highlight
+                        this.style.borderColor = '#ffaa00';
+                        this.style.transition = '0.1s';
+                        setTimeout(() => {
+                            this.style.borderColor = '#3d2b1c';
+                        }, 300);
+                    });
+                });
+            }
+
+            // extra touch: interactive hero (double click on svg)
+            const heroSvg = document.querySelector('.hero-visual svg');
+            if (heroSvg) {
+                heroSvg.addEventListener('dblclick', function() {
+                    rpm = 11500;
+                    revCounter.textContent = rpm;
+                    setStatus('💥 DRS OPEN · OVERTAKE', true);
+                });
+            }
+
+            // status line initial
+            setStatus('🏁 pit lane ready');
+
+            // bonus: "rev" also by clicking stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, idx) => {
+                card.addEventListener('click', () => {
+                    rpm += 250;
+                    if (rpm > 12000) rpm = 2000;
+                    revCounter.textContent = rpm;
+                    setStatus(`📊 stat #${idx+1} · +250 rpm`, false);
+                });
+            });
+
+            // That's all — one file covers all interactions.
+        })();
+    </script>
+</body>
+</html>
